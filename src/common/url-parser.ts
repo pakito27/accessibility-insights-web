@@ -4,7 +4,7 @@
 export class UrlParser {
     public getIntParam(urlString: string, key: string): number {
         const url = new URL(urlString);
-        return parseInt(url.searchParams.get(key), 10);
+        return 7;
     }
 
     public areURLHostNamesEqual(urlA: string, urlB: string): boolean {

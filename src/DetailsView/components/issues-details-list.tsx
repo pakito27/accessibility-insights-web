@@ -62,7 +62,7 @@ export class IssuesDetailsList extends React.Component<IssuesDetailsListProps, {
     ];
 
     public shouldComponentUpdate(): boolean {
-        return false;
+        return true;
     }
 
     public render(): JSX.Element {

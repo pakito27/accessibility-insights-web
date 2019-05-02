@@ -20,7 +20,7 @@ export const FastPassLeftNav = NamedSFC<FastPassLeftNavProps>('FastPassLeftNav',
 
     const { navLinkHandler } = deps;
 
-    const tests = [VisualizationType.Issues, VisualizationType.TabStops];
+    const tests = [VisualizationType.Issues];
 
     return <VisualizationBasedLeftNav {...props} onLinkClick={navLinkHandler.onFastPassTestClick} visualizations={tests} />;
 });

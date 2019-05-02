@@ -31,21 +31,17 @@ const commonEntryFiles = {
 const commonConfig = {
     entry: commonEntryFiles,
     module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            transpileOnly: true,
-                            experimentalWatchApi: true,
-                        },
-                    },
-                ],
-                exclude: ['/node_modules/'],
-            },
-        ],
+        rules: [{
+            test: /\.tsx?$/,
+            use: [{
+                loader: 'ts-loader',
+                options: {
+                    transpileOnly: true,
+                    experimentalWatchApi: true,
+                },
+            }, ],
+            exclude: ['/node_modules/'],
+        }, ],
     },
     resolve: {
         modules: [path.resolve(__dirname, 'node_modules')],
@@ -74,6 +70,7 @@ const devConfig = {
     optimization: {
         splitChunks: false,
     },
+    target: "electron-renderer",
 };
 
 const prodConfig = {

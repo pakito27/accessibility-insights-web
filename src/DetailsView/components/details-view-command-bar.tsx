@@ -70,7 +70,7 @@ export class DetailsViewCommandBar extends React.Component<DetailsViewCommandBar
         const targetPageTitle: string = this.props.tabStoreData.title;
         return (
             <div className="details-view-target-page">
-                Target page:&nbsp;
+                Target platform:&nbsp;
                 <Link
                     role="link"
                     title="Switch to target page"

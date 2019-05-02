@@ -15,6 +15,7 @@ import { ReportGenerator } from '../reports/report-generator';
 import { IssuesTable, IssuesTableDeps } from './issues-table';
 import { IssuesTableHandler } from './issues-table-handler';
 import { TargetPageChangedView } from './target-page-changed-view';
+import { AndroidResultsBridge } from '../android-results-bridge';
 
 export type AdhocIssuesTestViewDeps = IssuesTableDeps;
 
@@ -40,9 +41,7 @@ export const AdhocIssuesTestView = NamedSFC<AdhocIssuesTestViewProps>('AdhocIssu
     const scanData = props.configuration.getStoreData(props.visualizationStoreData.tests);
     const clickHandler = props.clickHandlerFactory.createClickHandler(selectedTest, !scanData.enabled);
     const isScanning: boolean = props.visualizationStoreData.scanning !== null;
-    const scanResult = props.visualizationScanResultData.issues.scanResult;
     const displayableData = props.configuration.displayableData;
-    const selectedIdToRuleResultMap = props.visualizationScanResultData.issues.selectedIdToRuleResultMap;
     const title = props.configuration.displayableData.title;
 
     if (props.tabStoreData.isChanged) {
@@ -58,16 +57,16 @@ export const AdhocIssuesTestView = NamedSFC<AdhocIssuesTestViewProps>('AdhocIssu
             issuesTableHandler={props.issuesTableHandler}
             issuesEnabled={scanData.enabled}
             issueTrackerPath={props.issueTrackerPath}
-            violations={scanResult != null ? scanResult.violations : null}
+            violations={null}
             issuesSelection={props.issuesSelection}
-            selectedIdToRuleResultMap={selectedIdToRuleResultMap}
+            selectedIdToRuleResultMap={{}}
             pageTitle={props.tabStoreData.title}
             pageUrl={props.tabStoreData.url}
             scanning={isScanning}
             toggleClickHandler={clickHandler}
             visualizationConfigurationFactory={props.visualizationConfigurationFactory}
             featureFlags={props.featureFlagStoreData}
-            scanResult={scanResult}
+            scanResult={null}
             reportGenerator={props.reportGenerator}
             userConfigurationStoreData={props.userConfigurationStoreData}
         />

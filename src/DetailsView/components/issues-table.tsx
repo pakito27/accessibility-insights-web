@@ -21,6 +21,7 @@ import { ExportDialog, ExportDialogDeps } from './export-dialog';
 import { IssuesDetailsList } from './issues-details-list';
 import { IssuesDetailsPane, IssuesDetailsPaneDeps } from './Issues-details-pane';
 import { IssuesTableHandler } from './issues-table-handler';
+import { AndroidResultsBridge } from '../android-results-bridge';
 
 export type IssuesTableDeps = IssuesDetailsPaneDeps & ExportDialogDeps;
 
@@ -66,6 +67,7 @@ export class IssuesTable extends React.Component<IssuesTableProps, IssuesTableSt
             exportName: '',
             exportDataWithPlaceholder: '',
             exportData: '',
+            waiting: true,
         };
     }
 
@@ -95,8 +97,8 @@ export class IssuesTable extends React.Component<IssuesTableProps, IssuesTableSt
     private renderCommandBar(): JSX.Element {
         return (
             <div className="details-view-command-bar">
-                {this.renderToggle()}
                 {this.renderExportButton()}
+                {this.renderOpenButton()}
             </div>
         );
     }
@@ -105,8 +107,21 @@ export class IssuesTable extends React.Component<IssuesTableProps, IssuesTableSt
         const shouldShowButton = this.props.issuesEnabled && !this.props.scanning;
         if (shouldShowButton) {
             return (
-                <ActionButton iconProps={{ iconName: 'Export' }} onClick={this.onExportButtonClick}>
-                    Export result
+                <ActionButton iconProps={{ iconName: 'Add' }} onClick={this.onExportButtonClick}>
+                    Get API results
+                </ActionButton>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    private renderOpenButton(): JSX.Element {
+        const shouldShowButton = this.props.issuesEnabled && !this.props.scanning;
+        if (shouldShowButton) {
+            return (
+                <ActionButton iconProps={{ iconName: 'Add' }} onClick={this.onOpenButtonClick}>
+                    Open results file
                 </ActionButton>
             );
         } else {
@@ -130,15 +145,11 @@ export class IssuesTable extends React.Component<IssuesTableProps, IssuesTableSt
     }
 
     private renderComponent(): JSX.Element {
-        if (!this.props.issuesEnabled) {
+        if ((this.state as any).waiting) {
             return this.renderDisabledMessage();
         }
 
-        if (this.props.scanning) {
-            return this.renderSpinner('Scanning...');
-        }
-
-        if (this.props.violations == null) {
+        if ((this.state as any).scanning) {
             return this.renderSpinner('Loading data...');
         }
 
@@ -165,7 +176,7 @@ export class IssuesTable extends React.Component<IssuesTableProps, IssuesTableSt
     private renderDisabledMessage(): JSX.Element {
         return (
             <div className="details-disabled-message" role="alert">
-                Turn on <Markup.Term>{this.configuration.displayableData.title}</Markup.Term> to see a list of failures.
+                Choose an option above to see results.
             </div>
         );
     }
@@ -174,7 +185,7 @@ export class IssuesTable extends React.Component<IssuesTableProps, IssuesTableSt
         return (
             <div className="issues-table-details">
                 <IssuesDetailsList
-                    violations={this.props.violations}
+                    violations={(this.state as any).violations}
                     issuesTableHandler={this.props.issuesTableHandler}
                     issuesSelection={this.props.issuesSelection}
                 />
@@ -201,23 +212,20 @@ export class IssuesTable extends React.Component<IssuesTableProps, IssuesTableSt
 
     @autobind
     private onExportButtonClick(): void {
-        const scanDate = new Date(this.props.scanResult.timestamp);
-        const exportName = this.props.reportGenerator.generateName('AutomatedChecksReport', scanDate, this.props.pageTitle);
-        const exportDataWithPlaceholder = this.props.reportGenerator.generateHtml(
-            this.props.scanResult,
-            scanDate,
-            this.props.pageTitle,
-            this.props.pageUrl,
-            this.descriptionPlaceholder,
-        );
-        const exportData = exportDataWithPlaceholder.replace(this.descriptionPlaceholder, '');
-        this.setState({
-            isExportDialogOpen: true,
-            exportDescription: '',
-            exportName: exportName,
-            exportDataWithPlaceholder: exportDataWithPlaceholder,
-            exportData: exportData,
+        this.setState({ ...this.state, scanning: true, waiting: false } as any);
+        AndroidResultsBridge.GetAxeResults(res => {
+            const violations = AndroidResultsBridge.AndroidToWebResults(JSON.parse(res));
+            this.setState({ ...this.state, violations: violations, scanning: false } as any);
         });
+    }
+
+    @autobind
+    private onOpenButtonClick(): void {
+        const selectedPath = AndroidResultsBridge.OpenFilePicker();
+        const android = AndroidResultsBridge.ReadAndroidFile(selectedPath);
+        const newViolations = AndroidResultsBridge.AndroidToWebResults(android);
+
+        this.setState({ ...this.state, violations: newViolations, scanning: false, waiting: false } as any);
     }
 
     @autobind

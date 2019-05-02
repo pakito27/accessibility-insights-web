@@ -28,10 +28,6 @@ export class GearOptionsButtonComponent extends React.Component<GearOptionsButto
 
         menuToReturn.push(this.getPreviewFeatureMenuItem());
 
-        if (this.props.featureFlags[FeatureFlags.scoping]) {
-            menuToReturn.push(this.getScopingFeatureMenuItem());
-        }
-
         return menuToReturn;
     }
 

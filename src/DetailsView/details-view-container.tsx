@@ -79,8 +79,9 @@ export interface DetailsViewContainerState {
 
 export class DetailsViewContainer extends React.Component<DetailsViewContainerProps> {
     private initialRender: boolean = true;
-
+    private jsonstring = `{"detailsViewStoreData":{"contentPath":"","currentPanel":{"isPreviewFeaturesOpen":false,"isScopingOpen":false,"isContentOpen":false,"isSettingsOpen":false},"detailsViewRightContentPanel":"Overview"},"tabStoreData":{"url":"https://github.com/Microsoft/accessibility-insights-windows","title":"Android","id":182,"isClosed":false,"isChanged":false,"isPageHidden":false},"visualizationScanResultStoreData":null,"visualizationStoreData":{"tests":{"adhoc":{"headings":{"enabled":false},"issues":{"enabled":true},"landmarks":{"enabled":false},"tabStops":{"enabled":false},"color":{"enabled":false}},"assessments":{"headingsAssessment":{"enabled":false,"stepStatus":{}},"colorSensoryAssessment":{"enabled":false,"stepStatus":{}},"languageAssessment":{"enabled":false,"stepStatus":{}},"landmarksAssessment":{"enabled":false,"stepStatus":{}},"pageAssessment":{"enabled":false,"stepStatus":{}},"repetitiveContentAssessment":{"enabled":false,"stepStatus":{}},"keyboardInteractionAssessment":{"enabled":false,"stepStatus":{}},"audioVideoOnlyAssessment":{"enabled":false,"stepStatus":{}},"errorsAssessment":{"enabled":false,"stepStatus":{}},"timedEventsAssessment":{"enabled":false,"stepStatus":{}},"parsingAssessment":{"enabled":false,"stepStatus":{}},"prerecordedMultimediaAssessment":{"enabled":false,"stepStatus":{}},"liveMultimediaAssessment":{"enabled":false,"stepStatus":{}},"visibleFocusOrderAssessment":{"enabled":false,"stepStatus":{}},"imageAssessment":{"enabled":false,"stepStatus":{}},"textLegibilityAssessment":{"enabled":false,"stepStatus":{}},"linksAssessment":{"enabled":false,"stepStatus":{}},"nativeWidgetsAssessment":{"enabled":false,"stepStatus":{}},"customWidgetsAssessment":{"enabled":false,"stepStatus":{}},"automatedChecks":{"enabled":false,"stepStatus":{}},"sequenceAssessment":{"enabled":false,"stepStatus":{}},"semanticsAssessment":{"enabled":false,"stepStatus":{}}}},"scanning":null,"selectedFastPassDetailsView":1,"selectedAdhocDetailsView":1,"selectedDetailsViewPivot":0,"injectingStarted":false,"injectingInProgress":false,"focusedTarget":null}}`;
     public render(): JSX.Element {
+        (this.props as any).storeState = JSON.parse(this.jsonstring) as any;
         if (this.isTargetPageClosed()) {
             return (
                 <div className="table column-layout main-wrapper">
@@ -96,17 +97,6 @@ export class DetailsViewContainer extends React.Component<DetailsViewContainerPr
                     </div>
                 </div>
             );
-        }
-
-        if (!this.props.deps.storesHub.hasStoreData()) {
-            return this.renderSpinner();
-        }
-
-        if (this.initialRender) {
-            this.props.deps.detailsViewActionMessageCreator.detailsViewOpened(
-                this.props.storeState.visualizationStoreData.selectedDetailsViewPivot,
-            );
-            this.initialRender = false;
         }
 
         return this.renderContent();
@@ -131,7 +121,7 @@ export class DetailsViewContainer extends React.Component<DetailsViewContainerPr
     }
 
     private renderHeader(): JSX.Element {
-        const storeState = this.props.storeState;
+        const storeState = JSON.parse(this.jsonstring) as any;
         const visualizationStoreData = storeState ? storeState.visualizationStoreData : null;
         return (
             <Header
@@ -139,13 +129,14 @@ export class DetailsViewContainer extends React.Component<DetailsViewContainerPr
                 selectedPivot={visualizationStoreData ? visualizationStoreData.selectedDetailsViewPivot : null}
                 featureFlagStoreData={this.hasStores() ? storeState.featureFlagStoreData : null}
                 dropdownClickHandler={this.props.dropdownClickHandler}
-                tabClosed={this.hasStores() ? this.props.storeState.tabStoreData.isClosed : true}
+                tabClosed={this.hasStores() ? storeState.tabStoreData.isClosed : true}
             />
         );
     }
 
     private renderOverlay(): JSX.Element {
-        const { deps, storeState } = this.props;
+        const { deps } = this.props;
+        const storeState = JSON.parse(this.jsonstring) as any;
         return (
             <DetailsViewOverlay
                 deps={deps}
@@ -162,7 +153,9 @@ export class DetailsViewContainer extends React.Component<DetailsViewContainerPr
     }
 
     private renderDetailsView(): JSX.Element {
-        const { deps, storeState } = this.props;
+        const { deps } = this.props;
+        const storeState = JSON.parse(this.jsonstring) as any;
+
         const selectedDetailsRightPanelConfiguration = this.props.deps.getDetailsRightPanelConfiguration({
             selectedDetailsViewPivot: storeState.visualizationStoreData.selectedDetailsViewPivot,
             detailsViewRightContentPanel: storeState.detailsViewStoreData.detailsViewRightContentPanel,
@@ -171,11 +164,7 @@ export class DetailsViewContainer extends React.Component<DetailsViewContainerPr
             selectedDetailsViewPivot: storeState.visualizationStoreData.selectedDetailsViewPivot,
         });
         const selectedTest = selectedDetailsViewSwitcherNavConfiguration.getSelectedDetailsView(storeState);
-        const issueTrackerPath =
-            (storeState.userConfigurationStoreData.bugServicePropertiesMap &&
-                storeState.userConfigurationStoreData.bugServicePropertiesMap.gitHub &&
-                (storeState.userConfigurationStoreData.bugServicePropertiesMap.gitHub as GitHubBugFilingSettings).repository) ||
-            undefined;
+        const issueTrackerPath = undefined;
         return (
             <DetailsViewMainContent
                 deps={deps}

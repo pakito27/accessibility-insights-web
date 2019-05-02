@@ -39,7 +39,7 @@ export const DetailsViewLeftNav = NamedSFC<DetailsViewLeftNavProps>('DetailsView
                 {...props}
                 assessmentsProvider={filteredProvider}
                 selectedKey={selectedKey}
-                assessmentsData={mapValues(assessmentStoreData.assessments, data => data.testStepStatus)}
+                assessmentsData={null}
             />
         </div>
     );
