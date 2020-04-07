@@ -14,20 +14,16 @@ export class DeviceConnectActionCreator {
         private readonly telemetryEventHandler: TelemetryEventHandler,
     ) {}
 
-    public validatePort(port: number): void {
+    public validatePort(port: string): void {
         this.telemetryEventHandler.publishTelemetry(VALIDATE_PORT, {
             telemetry: { port, source: TelemetryEventSource.ElectronDeviceConnect },
         });
 
         this.deviceActions.connecting.invoke({ port });
 
-        this.fetchDeviceConfig(port)
-            .then(data =>
-                this.deviceActions.connectionSucceeded.invoke({
-                    connectedDevice: `${data.deviceName} - ${data.appIdentifier}`,
-                }),
-            )
-            .catch(() => this.deviceActions.connectionFailed.invoke());
+        this.deviceActions.connectionSucceeded.invoke({
+            connectedDevice: port,
+        });
     }
 
     public resetConnection(): void {

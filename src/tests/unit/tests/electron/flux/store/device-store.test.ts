@@ -23,7 +23,7 @@ describe('DeviceStore', () => {
     });
 
     describe('on connecting', () => {
-        const testPort = 10101;
+        const testPort = '10101';
         it('updates the port and status to CONNECTING ', () => {
             const payload: PortPayload = {
                 port: testPort,

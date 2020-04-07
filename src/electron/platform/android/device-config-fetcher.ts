@@ -3,10 +3,10 @@
 import { DeviceConfig } from 'electron/platform/android/device-config';
 import { HttpGet } from 'electron/platform/android/fetch-scan-results';
 
-export type DeviceConfigFetcher = (port: number) => Promise<DeviceConfig>;
+export type DeviceConfigFetcher = (port: string) => Promise<DeviceConfig>;
 
 export const createDeviceConfigFetcher = (httpGet: HttpGet): DeviceConfigFetcher => {
-    return async (port: number) => {
+    return async (port: string) => {
         const response = await httpGet(`http://localhost:${port}/AccessibilityInsights/config`);
         return new DeviceConfig(response.data);
     };

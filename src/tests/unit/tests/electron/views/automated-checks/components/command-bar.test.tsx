@@ -52,7 +52,7 @@ describe('CommandBar', () => {
         const eventStub = new EventStubFactory().createMouseClickEvent() as any;
 
         it('handles start over click', () => {
-            const port = 111;
+            const port = '111';
 
             const scanActionCreatorMock = Mock.ofType<ScanActionCreator>(
                 undefined,

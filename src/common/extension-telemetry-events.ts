@@ -179,11 +179,11 @@ export type IssuesAnalyzerScanTelemetryData = {
 } & RuleAnalyzerScanTelemetryData;
 
 export type ValidatePortTelemetryData = {
-    port: number;
+    port: string;
 };
 
 export type AndroidScanCompletedTelemetryData = {
-    port: number;
+    port: string;
     scanDuration: number;
 } & InstanceCount;
 
@@ -200,7 +200,7 @@ export type InstanceCount = {
 };
 
 export type AndroidScanFailedTelemetryData = {
-    port: number;
+    port: string;
     scanDuration: number;
 };
 

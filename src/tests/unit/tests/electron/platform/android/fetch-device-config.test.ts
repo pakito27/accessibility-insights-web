@@ -14,7 +14,7 @@ describe('fetchDeviceConfig', () => {
 
     let testSubject: DeviceConfigFetcher;
 
-    const port = 10101;
+    const port = '10101';
 
     beforeEach(() => {
         httpGetMock = Mock.ofType<HttpGet>();

@@ -14,7 +14,7 @@ describe('fetchScanResults', () => {
 
     let testSubject: ScanResultsFetcher;
 
-    const port = 10101;
+    const port = '10101';
 
     beforeEach(() => {
         httpGetMock = Mock.ofType<HttpGet>();

@@ -4,6 +4,6 @@ import * as path from 'path';
 import { ResourceServerConfig } from 'tests/miscellaneous/test-resource-server/resource-server-config';
 
 export const testResourceServerConfig: ResourceServerConfig = {
-    port: 9050,
+    port: '9050',
     absolutePath: path.join(__dirname, '../../end-to-end/test-resources'),
 };

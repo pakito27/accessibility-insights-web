@@ -5,5 +5,5 @@ import { DeviceConnectState } from './device-connect-state';
 export interface DeviceStoreData {
     deviceConnectState: DeviceConnectState;
     connectedDevice: string;
-    port: number;
+    port: string;
 }

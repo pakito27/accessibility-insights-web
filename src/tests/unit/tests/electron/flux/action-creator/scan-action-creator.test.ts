@@ -8,7 +8,7 @@ import { ScanActions } from 'electron/flux/action/scan-actions';
 import { IMock, It, Mock, Times } from 'typemoq';
 
 describe('ScanActionCreator', () => {
-    const port = 1111;
+    const port = '1111';
 
     let scanActionsMock: IMock<ScanActions>;
     let scanStartedMock: IMock<Action<PortPayload>>;

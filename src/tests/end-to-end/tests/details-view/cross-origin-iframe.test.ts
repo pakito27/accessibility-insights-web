@@ -15,7 +15,7 @@ import { TargetPage } from '../../common/page-controllers/target-page';
 import { DEFAULT_TARGET_PAGE_SCAN_TIMEOUT_MS } from '../../common/timeouts';
 
 const testResourceServerConfig: ResourceServerConfig = {
-    port: 9053,
+    port: '9053',
     absolutePath: path.join(__dirname, '../../test-resources/'),
 };
 

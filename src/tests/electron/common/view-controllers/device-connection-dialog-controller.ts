@@ -15,7 +15,7 @@ export class DeviceConnectionDialogController extends ViewController {
     }
 
     // inputs the port, validates, and starts scanning
-    public async connectToPort(port: number): Promise<void> {
+    public async connectToPort(port: string): Promise<void> {
         await this.client.click(DeviceConnectionDialogSelectors.portNumber);
         await this.client.element(DeviceConnectionDialogSelectors.portNumber).keys(port.toString());
 

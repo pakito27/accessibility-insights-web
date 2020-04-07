@@ -41,7 +41,6 @@ export const DeviceConnectFooter = NamedFC<DeviceConnectFooterProps>(
                         props.deps.windowStateActionCreator.setRoute({ routeId: 'resultsView' });
                         props.deps.windowFrameActionCreator.maximize();
                     }}
-                    disabled={!props.canStartTesting}
                     text="Start testing"
                 ></PrimaryButton>
             </footer>

@@ -13,7 +13,7 @@ import { IMock, It, Mock, Times } from 'typemoq';
 import { tick } from '../../../../common/tick';
 
 describe('DeviceConnectActionCreator', () => {
-    const port = 1111;
+    const port = '1111';
 
     let telemetryEventHandlerMock: IMock<TelemetryEventHandler>;
     let deviceActionsMock: IMock<DeviceActions>;

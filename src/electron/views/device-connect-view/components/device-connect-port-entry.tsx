@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 import { KeyCodeConstants } from 'common/constants/keycode-constants';
+import { remote } from 'electron';
 import { DefaultButton, MaskedTextField, PrimaryButton } from 'office-ui-fabric-react';
 import * as React from 'react';
 
@@ -48,12 +49,11 @@ export class DeviceConnectPortEntry extends React.Component<
                 <div className={styles.deviceConnectPortEntryBody}>
                     <MaskedTextField
                         id={textFieldId}
+                        value={this.state.port}
                         data-automation-id={deviceConnectPortNumberFieldAutomationId}
                         onChange={this.onPortTextChanged}
                         placeholder="Ex: 12345"
                         className={styles.portNumberField}
-                        maskChar=""
-                        mask="99999"
                         onKeyDown={this.onEnterKey}
                         onRenderDescription={() => (
                             <span className={styles.portNumberFieldDescription}>
@@ -70,15 +70,10 @@ export class DeviceConnectPortEntry extends React.Component<
     private renderValidationPortButton(): JSX.Element {
         const props = {
             'data-automation-id': deviceConnectValidatePortButtonAutomationId,
-            disabled: this.isValidateButtonDisabled(),
             onClick: this.onValidateClick,
         };
 
-        if (this.props.viewState.deviceConnectState !== DeviceConnectState.Connected) {
-            return <PrimaryButton {...props}>Validate port number</PrimaryButton>;
-        }
-
-        return <DefaultButton {...props}>Validate port number</DefaultButton>;
+        return <PrimaryButton {...props}>Browse</PrimaryButton>;
     }
 
     private isValidateButtonDisabled(): boolean {
@@ -97,14 +92,20 @@ export class DeviceConnectPortEntry extends React.Component<
         this.setState({ port: newValue });
     };
 
-    private onValidateClick = (): void => {
-        const port = parseInt(this.state.port, 10);
-        this.props.deps.deviceConnectActionCreator.validatePort(port);
+    private onValidateClick = async (): Promise<any> => {
+        const file = await remote.dialog.showOpenDialog({ properties: ['openFile', 'openFile'] });
+        if (file.canceled) {
+            return;
+        }
+
+        this.props.deps.deviceConnectActionCreator.validatePort(file.filePaths[0]);
+
+        this.setState({ port: file.filePaths[0] });
     };
 
     private onEnterKey = (event: React.KeyboardEvent<HTMLInputElement>): void => {
         if (event.keyCode === KeyCodeConstants.ENTER) {
-            this.onValidateClick();
+            this.onValidateClick().catch(null);
         }
     };
 }

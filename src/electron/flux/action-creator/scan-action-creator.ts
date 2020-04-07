@@ -9,7 +9,7 @@ export class ScanActionCreator {
         private readonly deviceActions: DeviceActions,
     ) {}
 
-    public scan(port: number): void {
+    public scan(port: string): void {
         this.deviceActions.resetConnection.invoke();
         this.scanActions.scanStarted.invoke({ port });
     }

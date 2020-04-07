@@ -47,7 +47,7 @@ export class ScanController {
             .catch(this.scanFailed.bind(this, scanStartedTime, port));
     };
 
-    private scanCompleted(scanStartedTime: number, port: number, data: ScanResults): void {
+    private scanCompleted(scanStartedTime: number, port: string, data: ScanResults): void {
         const scanCompletedTime = this.getCurrentDate().getTime();
 
         const scanDuration = scanCompletedTime - scanStartedTime;
@@ -83,7 +83,7 @@ export class ScanController {
         );
     }
 
-    private scanFailed(scanStartedTime: number, port: number, error: Error): void {
+    private scanFailed(scanStartedTime: number, port: string, error: Error): void {
         this.logger.error('scan failed: ', error);
 
         const scanCompletedTime = this.getCurrentDate().getTime();

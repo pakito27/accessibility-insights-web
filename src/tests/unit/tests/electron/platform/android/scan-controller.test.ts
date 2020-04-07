@@ -24,7 +24,7 @@ import { axeRuleResultExample } from 'tests/unit/tests/electron/flux/action-crea
 import { ExpectedCallType, IMock, It, Mock, MockBehavior, Times } from 'typemoq';
 
 describe('ScanController', () => {
-    const port = 1111;
+    const port = '1111';
 
     const payload: PortPayload = {
         port,

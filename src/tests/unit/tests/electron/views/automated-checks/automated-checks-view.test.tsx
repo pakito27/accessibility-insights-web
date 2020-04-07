@@ -146,7 +146,7 @@ describe('AutomatedChecksView', () => {
     });
 
     it('triggers scan when first mounted', () => {
-        const port = 11111;
+        const port = '11111';
 
         const scanActionCreatorMock = Mock.ofType(ScanActionCreator);
         scanActionCreatorMock.setup(creator => creator.scan(port)).verifiable(Times.once());
@@ -172,7 +172,7 @@ describe('AutomatedChecksView', () => {
 
     describe('DeviceDisconnectedPopup event handlers', () => {
         it('onRescanDevice', () => {
-            const port = 11111;
+            const port = '11111';
 
             const scanActionCreatorMock = Mock.ofType(ScanActionCreator);
 
