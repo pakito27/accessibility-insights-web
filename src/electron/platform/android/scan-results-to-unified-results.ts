@@ -39,20 +39,7 @@ function createUnifiedResultsFromScanResults(
         scanResults,
     );
     const unifiedResults: UnifiedResult[] = [];
-
-    for (const ruleResult of scanResults.ruleResults) {
-        const ruleInformation: RuleInformation = ruleInformationProvider.getRuleInformation(
-            ruleResult.ruleId,
-        );
-
-        if (ruleInformation && ruleInformation.includeThisResult(ruleResult)) {
-            unifiedResults.push(
-                createUnifiedResult(ruleInformation, ruleResult, viewElementLookup, uuidGenerator),
-            );
-        }
-    }
-
-    return unifiedResults;
+    return scanResults.ruleResults;
 }
 
 function createViewElementLookup(scanResults: ScanResults): DictionaryStringTo<ViewElementData> {

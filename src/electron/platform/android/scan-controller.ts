@@ -52,13 +52,13 @@ export class ScanController {
 
         const scanDuration = scanCompletedTime - scanStartedTime;
 
-        const instanceCount = this.buildInstanceCount(data.ruleResults);
+        // const instanceCount = this.buildInstanceCount(data.ruleResults);
 
         this.telemetryEventHandler.publishTelemetry(SCAN_COMPLETED, {
             telemetry: {
                 port,
                 scanDuration,
-                ...instanceCount,
+                // ...instanceCount,
             },
         });
 

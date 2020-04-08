@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-import { ScreenshotData } from 'common/types/store-data/unified-data-interface';
+import { ScreenshotData, UnifiedResult } from 'common/types/store-data/unified-data-interface';
 
 export interface RuleResultsData {
     axeViewId: string;
@@ -33,8 +33,59 @@ export interface DeviceInfo {
     screenWidth: number;
 }
 
+const convertResult = (elem, result) => {
+    const ret: UnifiedResult = {
+        uid: elem.UniqueId,
+        status: 'fail',
+        ruleId: result.Description,
+        identifiers: { identifier: elem.Glimpse, conciseName: elem.Glimpse },
+        descriptors: { className: elem.Glimpse },
+        resolution: {
+            howToFixSummary: result.Items[0].Messages[0],
+            helpUrl: result.Items[0].HelpUrl.Url,
+        },
+    };
+    return ret;
+};
+
+const getResults = (queue: any[]) => {
+    const scanResults = [];
+    while (queue.length > 0) {
+        const current = queue.pop();
+        current.Children.forEach(child => queue.push(child));
+        if (current.ScanResults === null || current.ScanResults.Status !== 3) {
+            continue;
+        }
+        current.ScanResults.Items.forEach(result => {
+            if (result.Status === 3) {
+                const res = convertResult(current, result);
+                scanResults.push(res);
+            }
+        });
+    }
+
+    return scanResults;
+};
+
+const getAppId = (queue: any[]): string => {
+    while (queue.length > 0) {
+        const current = queue.pop();
+        current.Children.forEach(child => queue.push(child));
+        if (current.ScanResults === null) {
+            continue;
+        }
+        return current.Glimpse;
+    }
+};
+
 export class ScanResults {
-    constructor(readonly rawData: any) {}
+    private scanResults: any[];
+    private appId: string;
+
+    constructor(readonly rawData: any) {
+        this.scanResults = getResults([rawData]);
+        this.appId = getAppId([rawData]);
+    }
 
     public get deviceInfo(): DeviceInfo {
         return this.rawData?.axeContext?.axeDevice || null;
@@ -45,15 +96,15 @@ export class ScanResults {
     }
 
     public get appIdentifier(): string {
-        return this.rawData?.axeContext?.axeMetaData?.appIdentifier || null;
+        return this.appId || null;
     }
 
     public get viewElementTree(): ViewElementData {
         return this.rawData?.axeContext?.axeView || null;
     }
 
-    public get ruleResults(): RuleResultsData[] {
-        return this.rawData?.axeRuleResults || [];
+    public get ruleResults(): UnifiedResult[] {
+        return this.scanResults || [];
     }
 
     public get axeVersion(): string {
