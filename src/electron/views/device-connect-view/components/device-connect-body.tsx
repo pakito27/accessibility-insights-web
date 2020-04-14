@@ -42,10 +42,6 @@ export const DeviceConnectBody = NamedFC<DeviceConnectBodyProps>('DeviceConnectB
                 deps={props.deps}
                 viewState={{ deviceConnectState: props.viewState.deviceConnectState }}
             />
-            <DeviceConnectConnectedDevice
-                connectedDevice={props.viewState.connectedDevice}
-                deviceConnectState={props.viewState.deviceConnectState}
-            />
             <DeviceConnectFooter
                 deps={props.deps}
                 cancelClick={props.deps.currentWindow.close}

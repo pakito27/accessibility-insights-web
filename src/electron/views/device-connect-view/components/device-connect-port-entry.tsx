@@ -44,7 +44,7 @@ export class DeviceConnectPortEntry extends React.Component<
         return (
             <div className={styles.deviceConnectPortEntry}>
                 <label htmlFor={textFieldId} className={styles.portNumberLabel}>
-                    Android device port number
+                    Process ID
                 </label>
                 <div className={styles.deviceConnectPortEntryBody}>
                     <MaskedTextField
@@ -54,14 +54,15 @@ export class DeviceConnectPortEntry extends React.Component<
                         onChange={this.onPortTextChanged}
                         placeholder="Ex: 12345"
                         className={styles.portNumberField}
+                        maskChar=""
+                        mask="99999"
                         onKeyDown={this.onEnterKey}
                         onRenderDescription={() => (
                             <span className={styles.portNumberFieldDescription}>
-                                The port number must be between 0 and 65535.
+                                The process ID.
                             </span>
                         )}
                     />
-                    {this.renderValidationPortButton()}
                 </div>
             </div>
         );
@@ -90,17 +91,11 @@ export class DeviceConnectPortEntry extends React.Component<
     ) => {
         this.props.deps.deviceConnectActionCreator.resetConnection();
         this.setState({ port: newValue });
+        this.props.deps.deviceConnectActionCreator.validatePort(newValue);
     };
 
     private onValidateClick = async (): Promise<any> => {
-        const file = await remote.dialog.showOpenDialog({ properties: ['openFile', 'openFile'] });
-        if (file.canceled) {
-            return;
-        }
-
-        this.props.deps.deviceConnectActionCreator.validatePort(file.filePaths[0]);
-
-        this.setState({ port: file.filePaths[0] });
+        this.props.deps.deviceConnectActionCreator.validatePort(this.state.port);
     };
 
     private onEnterKey = (event: React.KeyboardEvent<HTMLInputElement>): void => {

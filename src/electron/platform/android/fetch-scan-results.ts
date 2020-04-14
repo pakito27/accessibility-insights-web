@@ -9,7 +9,9 @@ export type HttpGet = typeof axios.get;
 
 export const createScanResultsFetcher = (httpGet: HttpGet): ScanResultsFetcher => {
     return async (port: string) => {
-        const data = readFileSync(port);
-        return new ScanResults(JSON.parse(data.toString()));
+        const response = await httpGet(
+            `http://localhost:62445/AxeWindows/api/0.1/scan?processId=${port}&delayInSeconds=0`,
+        );
+        return new ScanResults(response.data);
     };
 };
