@@ -9,9 +9,11 @@ export type HttpGet = typeof axios.get;
 
 export const createScanResultsFetcher = (httpGet: HttpGet): ScanResultsFetcher => {
     return async (port: string) => {
-        const response = await httpGet(
-            `http://localhost:62445/AxeWindows/api/0.1/scan?processId=${port}&delayInSeconds=0`,
-        );
+        let url = 'http://localhost:62445/AxeWindows/api/0.1/scan?delayInSeconds=3';
+        if (port) {
+            url += `&processId=${port}`;
+        }
+        const response = await httpGet(url);
         return new ScanResults(response.data);
     };
 };
