@@ -15,6 +15,7 @@ import { Messages } from '../../../../../common/messages';
 import { TelemetryDataFactory } from '../../../../../common/telemetry-data-factory';
 import { CreateIssueDetailsTextData } from '../../../../../common/types/create-issue-details-text-data';
 import { EventStubFactory } from '../../../common/event-stub-factory';
+import { ToolData } from 'common/types/store-data/unified-data-interface';
 
 describe('IssueFilingActionMessageCreator', () => {
     const source: TelemetryEventSource = TelemetryEventSource.TargetPage;
@@ -89,8 +90,8 @@ describe('IssueFilingActionMessageCreator', () => {
             .setup(factory => factory.forFileIssueClick(eventStub, source, testService))
             .returns(() => telemetry);
         const issueDetailsData: CreateIssueDetailsTextData = {} as any;
-
-        testSubject.fileIssue(eventStub, testService, issueDetailsData);
+        const toolData = {} as ToolData;
+        testSubject.fileIssue(eventStub, toolData, testService, issueDetailsData);
 
         dispatcherMock.verify(
             dispatcher =>
@@ -101,6 +102,7 @@ describe('IssueFilingActionMessageCreator', () => {
                             service: testService,
                             issueData: issueDetailsData,
                             telemetry,
+                            toolData,
                         },
                     }),
                 ),

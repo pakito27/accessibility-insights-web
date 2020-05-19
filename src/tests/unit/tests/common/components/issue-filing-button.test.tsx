@@ -17,8 +17,8 @@ import { DefaultButton } from 'office-ui-fabric-react';
 import * as React from 'react';
 import { IMock, Mock, Times } from 'typemoq';
 
-import { ToolData } from 'common/types/store-data/unified-data-interface';
 import { EventStubFactory } from '../../../common/event-stub-factory';
+import { ToolData } from 'common/types/store-data/unified-data-interface';
 
 describe('IssueFilingButtonTest', () => {
     const testKey: string = 'test';
@@ -98,7 +98,9 @@ describe('IssueFilingButtonTest', () => {
             needsSettingsContentRenderer,
         };
         issueFilingActionMessageCreatorMock
-            .setup(creator => creator.fileIssue(eventStub, testKey, props.issueDetailsData))
+            .setup(creator =>
+                creator.fileIssue(eventStub, toolData, testKey, props.issueDetailsData),
+            )
             .verifiable(Times.once());
         const wrapper = shallow<IssueFilingButton>(<IssueFilingButton {...props} />);
 

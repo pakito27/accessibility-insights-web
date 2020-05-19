@@ -7,12 +7,14 @@ import { IssueFilingServicePropertiesMap } from 'common/types/store-data/user-co
 import { ToolData } from 'common/types/store-data/unified-data-interface';
 import { IssueFilingUrlProvider } from '../types/issue-filing-service';
 
+export type OpenLink = (url: string) => Promise<any>;
+
 export const createFileIssueHandler = <Settings>(
     getUrl: IssueFilingUrlProvider<Settings>,
     getSettings: (data: IssueFilingServicePropertiesMap) => Settings,
 ) => {
     return async (
-        browserAdapter: BrowserAdapter,
+        openLink: OpenLink,
         servicePropertiesMap: IssueFilingServicePropertiesMap,
         issueData: CreateIssueDetailsTextData,
         toolData: ToolData,
@@ -20,6 +22,6 @@ export const createFileIssueHandler = <Settings>(
         const serviceConfig = getSettings(servicePropertiesMap);
 
         const url = getUrl(serviceConfig, issueData, toolData);
-        await browserAdapter.createActiveTab(url);
+        await openLink(url);
     };
 };

@@ -42,7 +42,12 @@ describe('IssueFilingControllerImpl', () => {
         const issueFilingServiceMock = Mock.ofType<IssueFilingService>();
         issueFilingServiceMock
             .setup(service =>
-                service.fileIssue(browserAdapterMock.object, map, issueData, toolData),
+                service.fileIssue(
+                    browserAdapterMock.object.createActiveTab,
+                    map,
+                    issueData,
+                    toolData,
+                ),
             )
             .returns(() => Promise.resolve());
 
@@ -55,13 +60,14 @@ describe('IssueFilingControllerImpl', () => {
         storeMock.setup(store => store.getState()).returns(() => serviceConfig);
 
         const testSubject = new IssueFilingControllerImpl(
+            browserAdapterMock.object.createActiveTab,
             providerMock.object,
-            browserAdapterMock.object,
-            toolData,
             storeMock.object,
         );
 
-        await expect(testSubject.fileIssue(serviceKey, issueData)).resolves.toBe(undefined);
+        await expect(testSubject.fileIssue(serviceKey, issueData, toolData)).resolves.toBe(
+            undefined,
+        );
 
         browserAdapterMock.verifyAll();
     });

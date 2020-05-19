@@ -126,6 +126,7 @@ describe('IssueFilingDialog', () => {
             issueFilingServiceName: serviceKey,
             issueFilingSettings: selectedServiceData,
         };
+
         userConfigMessageCreatorMock
             .setup(creator => creator.saveIssueFilingSettings(payload))
             .verifiable();
@@ -133,6 +134,7 @@ describe('IssueFilingDialog', () => {
             .setup(creator =>
                 creator.fileIssue(
                     eventStub as any,
+                    toolData,
                     serviceKey,
                     It.isValue(props.selectedIssueData),
                 ),

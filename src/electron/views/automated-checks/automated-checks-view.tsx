@@ -93,6 +93,8 @@ export class AutomatedChecksView extends React.Component<AutomatedChecksViewProp
                 deviceName: this.props.unifiedScanResultStoreData.platformInfo.deviceName,
             };
 
+            this.props.deps.toolData = unifiedScanResultStoreData.toolInfo;
+
             return this.renderLayout(
                 cardsViewData,
                 scanMetadata,

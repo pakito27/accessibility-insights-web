@@ -134,6 +134,7 @@ export class CardKebabMenuButton extends React.Component<
         const selectedBugFilingService = issueFilingServiceProvider.forKey(
             userConfigurationStoreData.bugService,
         );
+
         const selectedBugFilingServiceData = selectedBugFilingService.getSettingsFromStoreData(
             userConfigurationStoreData.bugServicePropertiesMap,
         );
@@ -144,6 +145,7 @@ export class CardKebabMenuButton extends React.Component<
         if (isSettingValid) {
             issueFilingActionMessageCreator.fileIssue(
                 event,
+                deps.toolData,
                 userConfigurationStoreData.bugService,
                 issueDetailsData,
             );
@@ -156,6 +158,7 @@ export class CardKebabMenuButton extends React.Component<
     private copyFailureDetails = async (event: React.MouseEvent<any>): Promise<void> => {
         const text = this.props.deps.issueDetailsTextGenerator.buildText(
             this.props.issueDetailsData,
+            this.props.deps.toolData,
         );
         this.props.deps.detailsViewActionMessageCreator.copyIssueDetailsClicked(event);
 

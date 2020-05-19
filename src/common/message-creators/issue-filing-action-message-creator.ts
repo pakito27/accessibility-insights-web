@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 import { BaseActionPayload, FileIssuePayload } from 'background/actions/action-payloads';
 import { ActionMessageDispatcher } from 'common/message-creators/types/dispatcher';
+import { ToolData } from 'common/types/store-data/unified-data-interface';
 
 import { FILE_ISSUE_CLICK, TelemetryEventSource } from '../extension-telemetry-events';
 import { Message } from '../message';
@@ -41,6 +42,7 @@ export class IssueFilingActionMessageCreator {
 
     public fileIssue(
         event: SupportedMouseEvent,
+        toolData: ToolData,
         serviceKey: string,
         issueData: CreateIssueDetailsTextData,
     ): void {
@@ -49,6 +51,7 @@ export class IssueFilingActionMessageCreator {
         const payload: FileIssuePayload = {
             telemetry,
             issueData,
+            toolData,
             service: serviceKey,
         };
         const message: Message = {

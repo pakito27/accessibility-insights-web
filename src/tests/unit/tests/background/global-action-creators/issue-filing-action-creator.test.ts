@@ -13,6 +13,7 @@ import {
 } from '../../../../../common/extension-telemetry-events';
 import { CreateIssueDetailsTextData } from '../../../../../common/types/create-issue-details-text-data';
 import { IssueFilingController } from '../../../../../issue-filing/common/issue-filing-controller-impl';
+import { ToolData } from 'common/types/store-data/unified-data-interface';
 
 export { isFunction } from 'lodash';
 
@@ -21,6 +22,7 @@ describe('IssueFilingActionCreator', () => {
         const payload: FileIssuePayload = {
             issueData: {} as CreateIssueDetailsTextData,
             service: 'test-service',
+            toolData: {} as ToolData,
             telemetry: {
                 triggeredBy: 'test' as TriggeredBy,
                 source: -1 as TelemetryEventSource,
@@ -42,7 +44,9 @@ describe('IssueFilingActionCreator', () => {
             MockBehavior.Strict,
         );
         issueFilingControllerMock
-            .setup(controller => controller.fileIssue(payload.service, payload.issueData))
+            .setup(controller =>
+                controller.fileIssue(payload.service, payload.issueData, payload.toolData),
+            )
             .verifiable(Times.once());
 
         const testSubject = new IssueFilingActionCreator(

@@ -116,6 +116,7 @@ export class IssueFilingDialog extends React.Component<
         this.props.deps.userConfigMessageCreator.saveIssueFilingSettings(payload);
         this.props.deps.issueFilingActionMessageCreator.fileIssue(
             ev,
+            this.props.deps.toolData,
             service,
             this.props.selectedIssueData,
         );

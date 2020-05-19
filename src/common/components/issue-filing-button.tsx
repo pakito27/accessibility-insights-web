@@ -107,6 +107,7 @@ export class IssueFilingButton extends React.Component<
         if (isSettingValid) {
             issueFilingActionMessageCreator.fileIssue(
                 event,
+                this.props.deps.toolData,
                 userConfigurationStoreData.bugService,
                 issueDetailsData,
             );

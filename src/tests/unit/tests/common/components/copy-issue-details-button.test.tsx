@@ -14,6 +14,7 @@ import {
     CopyIssueDetailsButtonProps,
 } from '../../../../../common/components/copy-issue-details-button';
 import { CreateIssueDetailsTextData } from '../../../../../common/types/create-issue-details-text-data';
+import { ToolData } from 'common/types/store-data/unified-data-interface';
 
 describe('CopyIssueDetailsButtonTest', () => {
     let props: CopyIssueDetailsButtonProps;
@@ -21,6 +22,7 @@ describe('CopyIssueDetailsButtonTest', () => {
     let windowUtilsMock: IMock<WindowUtils>;
     let navigatorUtilsMock: IMock<NavigatorUtils>;
     const issueDetailsText = 'placeholder text';
+    const toolData = {} as ToolData;
     beforeEach(() => {
         onClickMock = Mock.ofInstance(e => {});
         windowUtilsMock = Mock.ofType<WindowUtils>();
@@ -30,8 +32,9 @@ describe('CopyIssueDetailsButtonTest', () => {
                 windowUtils: windowUtilsMock.object,
                 navigatorUtils: navigatorUtilsMock.object,
                 issueDetailsTextGenerator: {
-                    buildText: _ => issueDetailsText,
+                    buildText: (_, __) => issueDetailsText,
                 } as IssueDetailsTextGenerator,
+                toolData,
             },
             issueDetailsData: {} as CreateIssueDetailsTextData,
             onClick: onClickMock.object,

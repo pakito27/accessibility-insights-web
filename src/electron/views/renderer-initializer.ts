@@ -23,7 +23,7 @@ import { UnifiedScanResultStore } from 'background/stores/unified-scan-result-st
 import { ConsoleTelemetryClient } from 'background/telemetry/console-telemetry-client';
 import { UserConfigurationController } from 'background/user-configuration-controller';
 import { provideBlob } from 'common/blob-provider';
-import { onlyHighlightingSupported } from 'common/components/cards/card-interaction-support';
+import { allCardInteractionsSupported } from 'common/components/cards/card-interaction-support';
 import { ExpandCollapseVisualHelperModifierButtons } from 'common/components/cards/cards-visualization-modifier-buttons';
 import { CardsCollapsibleControl } from 'common/components/cards/collapsible-component-cards';
 import { FixInstructionProcessor } from 'common/components/fix-instruction-processor';
@@ -47,7 +47,7 @@ import { TelemetryDataFactory } from 'common/telemetry-data-factory';
 import { WindowUtils } from 'common/window-utils';
 import { DetailsViewActionMessageCreator } from 'DetailsView/actions/details-view-action-message-creator';
 import { CardsViewDeps } from 'DetailsView/components/cards-view';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, shell } from 'electron';
 import { DirectActionMessageDispatcher } from 'electron/adapters/direct-action-message-dispatcher';
 import { NullDetailsViewController } from 'electron/adapters/null-details-view-controller';
 import { NullStoreActionMessageCreator } from 'electron/adapters/null-store-action-message-creator';
@@ -110,6 +110,16 @@ import {
     RootContainerRendererDeps,
 } from './root-container/root-container-renderer';
 import { screenshotViewModelProvider } from './screenshot/screenshot-view-model-provider';
+import { IssueFilingControllerImpl } from 'issue-filing/common/issue-filing-controller-impl';
+import { IssueFilingServiceProviderImpl } from 'issue-filing/issue-filing-service-provider-impl';
+import { IssueFilingActionMessageCreator } from 'common/message-creators/issue-filing-action-message-creator';
+import { IssueDetailsTextGenerator } from 'background/issue-details-text-generator';
+import { IssueFilingUrlStringUtils } from 'issue-filing/common/issue-filing-url-string-utils';
+import { createIssueDetailsBuilder } from 'issue-filing/common/create-issue-details-builder';
+import { PlainTextFormatter } from 'issue-filing/common/markup/plain-text-formatter';
+import { IssueFilingActionCreator } from 'background/global-action-creators/issue-filing-action-creator';
+import { UnifiedResultToIssueFilingDataConverter } from 'issue-filing/unified-result-to-issue-filing-data';
+import { NavigatorUtils } from 'common/navigator-utils';
 
 declare var window: Window & {
     insightsUserConfiguration: UserConfigurationController;
@@ -339,10 +349,34 @@ getPersistedData(indexedDBInstance, indexedDBDataKeysToFetch).then(
 
         const fixInstructionProcessor = new FixInstructionProcessor();
 
+        const issueFilingController = new IssueFilingControllerImpl(
+            shell.openExternal,
+            IssueFilingServiceProviderImpl,
+            userConfigurationStore,
+        );
+        const issueFilingActionCreator = new IssueFilingActionCreator(
+            interpreter,
+            telemetryEventHandler,
+            issueFilingController,
+        );
+        issueFilingActionCreator.registerCallbacks();
+
+        const issueDetailsTextGenerator = new IssueDetailsTextGenerator(
+            IssueFilingUrlStringUtils,
+            createIssueDetailsBuilder(PlainTextFormatter),
+        );
+        const issueFilingActionMessageCreator = new IssueFilingActionMessageCreator(
+            dispatcher,
+            telemetryDataFactory,
+            TelemetryEventSource.ElectronAutomatedChecksView,
+        );
+
+        const navigatorUtils = new NavigatorUtils(window.navigator, logger);
+
         const cardsViewDeps: CardsViewDeps = {
             LinkComponent: ElectronLink,
 
-            cardInteractionSupport: onlyHighlightingSupported, // once we have a working settings experience, switch to allCardInteractionsSupported
+            cardInteractionSupport: allCardInteractionsSupported, // once we have a working settings experience, switch to allCardInteractionsSupported
             getCardSelectionViewData: getCardSelectionViewData,
             collapsibleControl: CardsCollapsibleControl,
             cardsVisualizationModifierButtons: ExpandCollapseVisualHelperModifierButtons,
@@ -353,15 +387,15 @@ getPersistedData(indexedDBInstance, indexedDBDataKeysToFetch).then(
             cardSelectionMessageCreator,
 
             detailsViewActionMessageCreator,
-            issueFilingActionMessageCreator: null, // we don't support issue filing right now
+            issueFilingActionMessageCreator: issueFilingActionMessageCreator, // we don't support issue filing right now
 
             toolData: null,
             getPropertyConfigById: getPropertyConfiguration, // this seems to be axe-core specific
 
-            issueDetailsTextGenerator: null,
-            issueFilingServiceProvider: null, // we don't support issue filing right now
-            navigatorUtils: null,
-            unifiedResultToIssueFilingDataConverter: null, // we don't support issue filing right now
+            issueDetailsTextGenerator: issueDetailsTextGenerator,
+            issueFilingServiceProvider: IssueFilingServiceProviderImpl, // we don't support issue filing right now
+            navigatorUtils: navigatorUtils,
+            unifiedResultToIssueFilingDataConverter: new UnifiedResultToIssueFilingDataConverter(), // we don't support issue filing right now
             windowUtils: null,
             setFocusVisibility,
             customCongratsMessage:

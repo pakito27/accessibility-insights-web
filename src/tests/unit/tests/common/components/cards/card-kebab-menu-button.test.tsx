@@ -26,6 +26,7 @@ import { IssueFilingService } from 'issue-filing/types/issue-filing-service';
 import { ActionButton, IContextualMenuItem } from 'office-ui-fabric-react';
 import * as React from 'react';
 import { IMock, Mock, Times } from 'typemoq';
+import { ToolData } from 'common/types/store-data/unified-data-interface';
 
 describe('CardKebabMenuButtonTest', () => {
     let defaultProps: CardKebabMenuButtonProps;
@@ -44,6 +45,18 @@ describe('CardKebabMenuButtonTest', () => {
     const event = {
         currentTarget: 'Card View',
     } as React.MouseEvent<any>;
+
+    const toolData: ToolData = {
+        scanEngineProperties: {
+            name: 'engine-name',
+            version: 'engine-version',
+        },
+        applicationProperties: {
+            name: 'app-name',
+            version: 'app-version',
+            environmentName: 'environmentName',
+        },
+    };
 
     const issueDetailsText = 'placeholder text';
 
@@ -107,7 +120,7 @@ describe('CardKebabMenuButtonTest', () => {
             .verifiable(Times.exactly(3));
 
         textGeneratorMock
-            .setup(tg => tg.buildText(issueDetailsData))
+            .setup(tg => tg.buildText(issueDetailsData, toolData))
             .returns(() => issueDetailsText)
             .verifiable();
 
@@ -119,6 +132,7 @@ describe('CardKebabMenuButtonTest', () => {
             issueFilingActionMessageCreator: issueFilingActionMessageCreatorMock.object,
             issueDetailsTextGenerator: textGeneratorMock.object,
             cardInteractionSupport: allCardInteractionsSupported,
+            toolData,
         } as CardKebabMenuButtonDeps;
 
         defaultProps = {
@@ -256,7 +270,9 @@ describe('CardKebabMenuButtonTest', () => {
 
     it('should file issue, valid settings', async () => {
         issueFilingActionMessageCreatorMock
-            .setup(creator => creator.fileIssue(event, testKey, defaultProps.issueDetailsData))
+            .setup(creator =>
+                creator.fileIssue(event, toolData, testKey, defaultProps.issueDetailsData),
+            )
             .verifiable(Times.once());
 
         const rendered = shallow<CardKebabMenuButton>(<CardKebabMenuButton {...defaultProps} />);
@@ -275,7 +291,9 @@ describe('CardKebabMenuButtonTest', () => {
     it('should click file issue, invalid settings', () => {
         testIssueFilingServiceStub.isSettingsValid = () => false;
         issueFilingActionMessageCreatorMock
-            .setup(creator => creator.fileIssue(event, testKey, defaultProps.issueDetailsData))
+            .setup(creator =>
+                creator.fileIssue(event, toolData, testKey, defaultProps.issueDetailsData),
+            )
             .verifiable(Times.never());
 
         const rendered = shallow<CardKebabMenuButton>(<CardKebabMenuButton {...defaultProps} />);
